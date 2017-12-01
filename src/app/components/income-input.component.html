@@ -1,0 +1,47 @@
+<div class="form-row">
+  <div class="form-group col-md-4">
+    <label for="income">Name</label>
+    <input
+      type="text"
+      class="form-control"
+      id="income-name-1"
+      placeholder="Name"
+      [value]="value.name"
+      (input)="value = {
+        name: $event.target.value,
+        monthly: value.monthly,
+        annually: value.annually
+      }"
+    >
+  </div>
+  <div class="form-group col-md-4">
+    <label for="income-2">Monthly</label>
+    <input
+      type="number"
+      class="form-control"
+      id="income-montly-1"
+      placeholder="500"
+      [value]="value.monthly"
+      (input)="value = {
+        name: value.name,
+        monthly: $event.target.value,
+        annually: value.annually
+      }"
+    >
+  </div>
+  <div class="form-group col-md-4">
+    <label for="income-2">Annually</label>
+    <input
+      type="number"
+      class="form-control"
+      id="income-annually-1"
+      placeholder="6,000"
+      [value]="value.annually"
+      (input)="value = {
+        name: value.name,
+        monthly: value.monthly,
+        annually: $event.target.value
+      }"
+    >
+  </div>
+</div>

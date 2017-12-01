@@ -1,0 +1,14 @@
+<div class="container">
+  <h1>Savings Rate Calculator</h1>
+  <form [formGroup]="formGroup" novalidate>
+    <div formArrayName="incomes">
+      <div *ngFor="let income of formGroup.controls.incomes.controls; let index = index">
+        <sr-income-input [formControlName]="index"></sr-income-input>
+      </div>
+    </div>
+    <button type="button" class="btn btn-success" (click)="addIncome($event)">
+      +
+    </button>
+    {{formGroup.value | json}}
+  </form>
+</div>
