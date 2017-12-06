@@ -1,5 +1,10 @@
 import { Component, OnInit } from "@angular/core";
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+
+import { FederalTaxForm } from './models/federal-tax-form';
+import { FederalTaxStore } from './stores/federal-tax.store';
+import { FederalTaxCalculatorService } from './services/federal-tax-calculator.service';
 
 @Component({
   selector: 'sr-app',
@@ -7,15 +12,29 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  
-  private formGroup = this.formBuilder.group({
+
+  formGroup = this.formBuilder.group({
+    filingStatus: 'single',
     incomes: this.formBuilder.array([
-      { name: 'Primary'}
+      { name: 'Primary' }
     ])
   });
   
+  formValue = this.formGroup.valueChanges
+    .startWith(this.formGroup.value);
+  
+  filingStatus = this.formValue.map(form => form.filingStatus);
+  
+  federalTaxes = Observable.combineLatest(this.federalTaxStore.federalTaxes, this.filingStatus)
+    .map(([federalTaxes, filingStatus]) => federalTaxes[filingStatus])
+    
+  taxesPayable = Observable.combineLatest(this.federalTaxes, this.formValue)
+    .map(this.calculateTaxes.bind(this))
+  
   constructor(
-    private formBuilder: FormBuilder
+    private formBuilder: FormBuilder,
+    private federalTaxStore: FederalTaxStore,
+    private federalTaxCalculatorService: FederalTaxCalculatorService
   ) {}
     
   ngOnInit() {
@@ -25,5 +44,14 @@ export class AppComponent implements OnInit {
     (this.formGroup.controls.incomes as FormArray).push(
       this.formBuilder.control({ name: 'Secondary' })
     );
+  }
+  
+  private calculateTaxes([federalTaxes, formValue]: any[]) {
+    return this.federalTaxCalculatorService.calculate(
+      new FederalTaxForm({
+        filingStatus: federalTaxes,
+        incomes: formValue.incomes.map(({ annually }: any) => annually)
+      })
+    )
   }
 }

@@ -9,6 +9,15 @@
     <button type="button" class="btn btn-success" (click)="addIncome($event)">
       +
     </button>
-    {{formGroup.value | json}}
+    <div class="form-group">
+      <label for="filingStatus">Filing Status</label>
+      <select formControlName="filingStatus" class="form-control" id="filingStatus">
+        <option value="single">Single</option>
+        <option value="married">Married Filing Jointly</option>
+        <option value="marriedSeparately">Married Filing Separately</option>
+        <option value="headOfHousehold">Head of Household</option>
+      </select>
+    </div>
+    {{taxesPayable | async}}
   </form>
 </div>
