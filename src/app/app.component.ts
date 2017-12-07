@@ -29,6 +29,7 @@ export class AppComponent implements OnInit {
     .map(([federalTaxes, filingStatus]) => federalTaxes[filingStatus])
     
   taxesPayable = Observable.combineLatest(this.federalTaxes, this.formValue)
+    .filter((taxes, formValue) => !!formValue)
     .map(this.calculateTaxes.bind(this))
   
   constructor(

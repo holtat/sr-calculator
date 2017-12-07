@@ -18,7 +18,7 @@ export class FederalTaxStore {
   }
   
   loadInitialData() {
-    const observable  = this.federalTaxService.getFederalTaxes();
+    const observable  = this.federalTaxService.getFederalTaxes(2017);
     
     observable.subscribe(federalTaxes => {
       this._federalTaxes.next(federalTaxes);

@@ -18,6 +18,6 @@
         <option value="headOfHousehold">Head of Household</option>
       </select>
     </div>
-    {{taxesPayable | async}}
+    Federal Tax: {{taxesPayable | async | currency}}
   </form>
 </div>
