@@ -1,4 +1,4 @@
-import { FilingStatus, Exemption, Deduction } from './federal-taxes';
+import { FilingStatus, Exemption, Deduction } from './index';
 
 export class FederalTaxForm {
   filingStatus = new FilingStatus();

@@ -1,8 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 
-import { FederalTaxForm } from './models/federal-tax-form';
+import { FederalTaxForm } from './models';
 import { FederalTaxStore } from './stores/federal-tax.store';
 import { FederalTaxCalculatorService } from './services/federal-tax-calculator.service';
 
@@ -11,7 +11,7 @@ import { FederalTaxCalculatorService } from './services/federal-tax-calculator.s
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
 
   formGroup = this.formBuilder.group({
     filingStatus: 'single',
@@ -20,15 +20,15 @@ export class AppComponent implements OnInit {
     ])
   });
   
-  formValue = this.formGroup.valueChanges
+  formValue$ = this.formGroup.valueChanges
     .startWith(this.formGroup.value);
   
-  filingStatus = this.formValue.map(form => form.filingStatus);
+  filingStatus$ = this.formValue$.map(form => form.filingStatus);
   
-  federalTaxes = Observable.combineLatest(this.federalTaxStore.federalTaxes, this.filingStatus)
+  federalTaxes$ = Observable.combineLatest(this.federalTaxStore.federalTaxes, this.filingStatus$)
     .map(([federalTaxes, filingStatus]) => federalTaxes[filingStatus])
     
-  taxesPayable = Observable.combineLatest(this.federalTaxes, this.formValue)
+  taxesPayable$ = Observable.combineLatest(this.federalTaxes$, this.formValue$)
     .filter((taxes, formValue) => !!formValue)
     .map(this.calculateTaxes.bind(this))
   
@@ -37,9 +37,6 @@ export class AppComponent implements OnInit {
     private federalTaxStore: FederalTaxStore,
     private federalTaxCalculatorService: FederalTaxCalculatorService
   ) {}
-    
-  ngOnInit() {
-  }  
   
   private addIncome(event: any) {
     (this.formGroup.controls.incomes as FormArray).push(
