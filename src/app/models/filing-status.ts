@@ -5,13 +5,28 @@ export class FilingStatus {
   deductions: Deduction[]
   exemptions: Exemption[];
   
-  constructor(json?: any) {
+  static fromJson(json?: any) {
+    const filingStatus = new FilingStatus();
+
     if (!json) {
-      return;
+      return filingStatus;
     }
     
-    this.incomeTaxBrackets = json.income_tax_brackets.map((taxBracket: any) => new IncomeTaxBracket(taxBracket));
-    this.deductions = json.deductions.map((deduction: any) => new Deduction(deduction));
-    this.exemptions = json.exemptions.map((exemption: any) => new Exemption(exemption));
+    if (json.income_tax_brackets) {
+      filingStatus.incomeTaxBrackets = json.income_tax_brackets.map((taxBracket: any) =>
+        IncomeTaxBracket.fromJson(taxBracket));
+    }
+    
+    if (json.deductions) {
+      filingStatus.deductions = json.deductions.map((deduction: any) =>
+        Deduction.fromJson(deduction));
+    }
+    
+    if (json.exemptions) {
+      filingStatus.exemptions = json.exemptions.map((exemption: any) =>
+        Exemption.fromJson(exemption));
+    }
+    
+    return filingStatus;
   }
 }

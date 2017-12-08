@@ -44,7 +44,7 @@ export class AppComponent {
     );
   }
   
-  private calculateTaxes([federalTaxes, formValue]: any[]) {
+  private calculateTaxes([federalTaxes, formValue]: any[]): number {
     return this.federalTaxCalculatorService.calculate(
       new FederalTaxForm({
         filingStatus: federalTaxes,

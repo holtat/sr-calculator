@@ -4,14 +4,18 @@ export class IncomeTaxBracket {
   marginalCapitalGainRate = 0;
   amount = 0;
   
-  constructor(json?: any) {
+  static fromJson(json?: any) {
+    const incomeTaxBracket = new IncomeTaxBracket();
+
     if (!json) {
-      return;
+      return incomeTaxBracket;
     }
     
-    this.bracket = json.bracket;
-    this.marginalRate = json.marginal_rate;
-    this.marginalCapitalGainRate = json.marginal_capital_gain_rate;
-    this.amount = json.amount;
+    incomeTaxBracket.bracket = json.bracket;
+    incomeTaxBracket.marginalRate = json.marginal_rate;
+    incomeTaxBracket.marginalCapitalGainRate = json.marginal_capital_gain_rate;
+    incomeTaxBracket.amount = json.amount;
+    
+    return incomeTaxBracket;
   }
 }

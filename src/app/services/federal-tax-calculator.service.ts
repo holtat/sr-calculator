@@ -4,7 +4,14 @@ import { FederalTaxForm } from '../models/federal-tax-form';
 
 @Injectable()
 export class FederalTaxCalculatorService {
-  calculate(form: FederalTaxForm) {
+  
+  /**  
+   * calculate - Calculates federal tax amount
+   *    
+   * @param  {type} form: FederalTaxForm   
+   * @return {type} number: The amount of federal taxes owed 
+   */   
+  calculate(form: FederalTaxForm): number {
     const totalIncome = form.incomes.reduce((total, income) => total + Number(income || 0), 0);
 
     if (totalIncome <= 0) {
@@ -22,7 +29,7 @@ export class FederalTaxCalculatorService {
     return filersTaxBracket.amount + (totalIncome - filersTaxBracket.bracket) * filersTaxBracket.marginalRate * 0.01;
   }
   
-  orderBracketsAscending(bracketA: any, bracketB: any) {
+  private orderBracketsAscending(bracketA: any, bracketB: any) {
     return bracketA.bracket - bracketB.bracket;
   }
 }

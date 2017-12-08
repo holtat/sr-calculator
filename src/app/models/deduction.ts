@@ -2,12 +2,16 @@ export class Deduction {
   deductionName = '';
   deductionAmount = 0;
   
-  constructor(json?: any) {
+  static fromJson(json?: any) {
+    const deduction = new Deduction();
+
     if (!json) {
-      return;
+      return deduction;
     }
     
-    this.deductionName = json.deduction_name;
-    this.deductionAmount = json.deduction_amount;
+    deduction.deductionName = json.deduction_name;
+    deduction.deductionAmount = json.deduction_amount;
+    
+    return deduction;
   }
 }

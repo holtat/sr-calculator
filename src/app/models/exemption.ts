@@ -2,12 +2,16 @@ export class Exemption {
   exemptionName = '';
   exemptionAmount = 0;
   
-  constructor(json?: any) {
+  static fromJson(json?: any) {
+    const exemption = new Exemption();
+
     if (!json) {
-      return;
+      return exemption;
     }
     
-    this.exemptionName = json.exemption_name;
-    this.exemptionAmount = json.exemption_amount;
+    exemption.exemptionName = json.exemption_name;
+    exemption.exemptionAmount = json.exemption_amount;
+    
+    return exemption;
   }
 }
