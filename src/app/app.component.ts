@@ -3,13 +3,9 @@ import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
-import { FederalTaxForm } from './models';
+import { FederalTaxForm, AppState } from './models';
 import { FederalTaxCalculatorService } from './services/federal-tax-calculator.service';
 import { GetFederalTaxes } from './actions';
-
-interface AppState {
-  entities: {};
-}
 
 @Component({
   selector: 'sr-app',
@@ -30,14 +26,14 @@ export class AppComponent implements OnInit {
 
   filingStatus$ = this.formValue$.map(form => form.filingStatus);
 
-  entities$ = this.store.select('entities')
+  federalTaxes$ = this.store.select('entities')
     .map((entities: { federalTaxes: any }) => entities.federalTaxes)
     .filter(federalTaxes => !!federalTaxes);
 
-  federalTaxes$ = Observable.combineLatest(this.entities$, this.filingStatus$)
+  federalTax$ = Observable.combineLatest(this.federalTaxes$, this.filingStatus$)
     .map(([federalTaxes, filingStatus]) => federalTaxes[filingStatus]);
 
-  taxesPayable$ = Observable.combineLatest(this.federalTaxes$, this.formValue$)
+  taxesPayable$ = Observable.combineLatest(this.federalTax$, this.formValue$)
     .filter((taxes, formValue) => !!formValue)
     .map(this.calculateTaxes.bind(this))
     .startWith(0);
