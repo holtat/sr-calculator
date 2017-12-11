@@ -1,3 +1,4 @@
+const webpack = require("webpack");
 const webpackMerge = require('webpack-merge');
 const path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -14,7 +15,8 @@ module.exports = webpackMerge(commonConfig, {
   },
   
   plugins: [
-    new ExtractTextPlugin('[name].css')
+    new ExtractTextPlugin('[name].css'),
+    new webpack.NamedModulesPlugin()
   ],
   
   devServer: {
