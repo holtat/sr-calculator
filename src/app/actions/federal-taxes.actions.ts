@@ -1,5 +1,4 @@
 import { Action } from '@ngrx/store';
-
 import { FederalTaxes } from '../models';
 
 export const GET_FEDERAL_TAX = '[FederalTaxes] Get';

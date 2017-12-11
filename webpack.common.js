@@ -33,12 +33,8 @@ module.exports = {
     rules: [
       {
         test: /\.ts$/,
-        enforce: 'pre',
-        loader: 'tslint-loader'
-      },
-      {
-        test: /\.ts$/,
         exclude: [/node_modules/, /dist/],
+        enforce: 'pre',
         use: [
           {
             loader: "awesome-typescript-loader",
@@ -46,7 +42,8 @@ module.exports = {
               configFileName: "./tsconfig.json"
             }
           },
-          "angular2-template-loader"
+          "angular2-template-loader",
+          'tslint-loader'
         ]
       },
       {
