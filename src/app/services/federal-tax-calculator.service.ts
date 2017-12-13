@@ -15,8 +15,11 @@ export class FederalTaxCalculatorService {
     const totalIncome = form.incomes.reduce((total, income) => total + Number(income || 0), 0);
 
     const taxedIncome = totalIncome
-      - form.deductions.reduce((total, deduction) => total + Number(deduction || 0), 0)
-      - form.pretaxDeductions.reduce((total, pretax) => total + Number(pretax || 0), 0);
+      - form.deductions.reduce((total, deduction) => total + deduction, 0)
+      - form.numberOfExemptions * form.filingStatus.exemptions[0].exemptionAmount
+      - (form.isItemizing
+      ? form.itemizedDeductions.reduce((total, deduction) => total + deduction, 0)
+      : form.filingStatus.deductions[0].deductionAmount);
 
     if (taxedIncome <= 0) {
       return 0;

@@ -10,6 +10,10 @@
         <option value="headOfHousehold">Head of Household</option>
       </select>
     </div>
+    <div class="form-group">
+      <label for="exemptions">Number of Exemptions</label>
+      <input type="number" class="form-control" id="exemptions" placeholder="1" formControlName="exemptions">
+    </div>
     <div formArrayName="incomes">
       <div *ngFor="let income of formGroup.controls.incomes.controls; let index = index">
         <sr-income-input [formControlName]="index"></sr-income-input>
@@ -19,6 +23,10 @@
       <button type="button" class="btn btn-success" (click)="addIncome($event)">
         + Add Income
       </button>
+    </div>
+    <div class="form-group">
+      <label for="401k">401k Contribution</label>
+      <input type="number" class="form-control" id="401k" placeholder="18,000" formControlName="401k">
     </div>
     <div class="form-group custom-controls-stacked">
       <label class="custom-control custom-radio">
@@ -32,15 +40,17 @@
         <span class="custom-control-description">Itemized Deduction</span>
       </label>
     </div>
-    <div class="form-group">
-      <label for="401k">401k Contribution</label>
-      <input type="number" class="form-control" id="401k" placeholder="18,000" formControlName="401k">
-    </div>
     <ng-container *ngIf="isItemizingDeduction$ | async">
-      ITEMIZE
+      <div class="form-group">
+        <label for="itemizedDeductions">Total Itemized Deductions</label>
+        <input type="number" class="form-control" id="itemizedDeductions" placeholder="13,000" formControlName="itemizedDeductions">
+      </div>
     </ng-container>
     <div class="mt-4">
       Federal Tax: {{taxesPayable$ | async | currency}}
+    </div>
+    <div class="mt-4">
+      Effective Tax Rate: {{effectiveTaxRate$ | async | number}}%
     </div>
   </form>
 </div>

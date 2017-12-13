@@ -1,23 +1,24 @@
-import { FilingStatus, Exemption, Deduction } from './index';
+import { FilingStatus, Exemption, Deduction, FederalTaxes } from './index';
+import { DeductionType } from '../enums/index';
 
 export class FederalTaxForm {
   filingStatus = new FilingStatus();
   incomes: number[] = [];
   numberOfExemptions = 0;
-  exemptions: Exemption[] = [];
   deductions: number[] = [];
-  pretaxDeductions: number [] = [];
+  isItemizing = false;
+  itemizedDeductions: number[] = [];
 
-  constructor(obj?: any) {
-    if (!obj) {
-      return;
-    }
+  static from(federalTaxes: FederalTaxes, formValue: any) {
+    const taxForm = new FederalTaxForm();
 
-    this.filingStatus = obj.filingStatus;
-    this.incomes = obj.incomes;
-    this.numberOfExemptions = obj.numberOfExemptions;
-    this.exemptions = obj.exemptions;
-    this.deductions = obj.deductions;
-    this.pretaxDeductions = obj.pretaxDeductions;
+    taxForm.filingStatus = federalTaxes[formValue.filingStatus];
+    taxForm.incomes = formValue.incomes.map(({ annually }: any) => annually);
+    taxForm.numberOfExemptions = formValue.exemptions || 0;
+    taxForm.deductions = [Number(formValue['401k'] || 0), ];
+    taxForm.isItemizing = formValue.deductionType === DeductionType.itemized;
+    taxForm.itemizedDeductions = [Number(formValue.itemizedDeductions || 0)];
+
+    return taxForm;
   }
 }

@@ -17,11 +17,13 @@ export class AppComponent implements OnInit {
 
   formGroup = this.formBuilder.group({
     filingStatus: 'single',
+    exemptions: 1,
     incomes: this.formBuilder.array([
       { name: 'Primary' }
     ]),
     deductionType: DeductionType.standard,
-    '401k': ''
+    '401k': '',
+    itemizedDeductions: ''
   });
 
   formValue$ = this.formGroup.valueChanges
@@ -31,37 +33,16 @@ export class AppComponent implements OnInit {
     .map((entities: { federalTaxes: any }) => entities.federalTaxes)
     .filter(federalTaxes => !!federalTaxes);
 
-  annualIncomes$ = this.formValue$
-    .map(form => form.incomes.map((income: any) => income.annually))
-    .startWith(0);
-
-  filingStatus$: Observable<FilingStatus> =
-    Observable.combineLatest(this.federalTaxes$, this.formValue$)
-      .map(([federalTaxes, formValue]) => federalTaxes[formValue.filingStatus]);
-
-  pretaxDeductions$ = this.formValue$.map(form => [form['401k']])
-    .startWith([0]);
-
   isItemizingDeduction$ = this.formValue$.map(form =>
     form.deductionType === DeductionType.itemized);
 
-  standardDeduction$ = this.filingStatus$.map(filingStatus =>
-    filingStatus.deductions.map((deduction: any) => deduction.deductionAmount));
-
-  itemizedDeductions$ = Observable.of([30000]);
-
-  deductions$ = this.formValue$
-    .switchMap((value: any) => value.deductionType === DeductionType.itemized
-      ? this.itemizedDeductions$
-      : this.standardDeduction$);
-
-  taxesPayable$ = Observable.combineLatest(
-    this.filingStatus$,
-    this.annualIncomes$,
-    this.deductions$,
-    this.pretaxDeductions$
-  )
+  taxesPayable$ = Observable.combineLatest([this.federalTaxes$, this.formValue$])
     .map(this.calculateTaxes.bind(this))
+    .startWith(0);
+
+  effectiveTaxRate$ = Observable.combineLatest([this.taxesPayable$, this.formValue$])
+    .filter(([_, formValue]) => formValue.incomes.some((income: any) => income.annually > 0))
+    .map(this.calculateEffectiveTaxRate.bind(this))
     .startWith(0);
 
   constructor(
@@ -76,18 +57,18 @@ export class AppComponent implements OnInit {
 
   private addIncome(event: any) {
     (this.formGroup.controls.incomes as FormArray).push(
-      this.formBuilder.control({ name: 'Secondary' })
-    );
+      this.formBuilder.control({ name: 'Secondary' }));
   }
 
-  private calculateTaxes([filingStatus, incomes, deductions, pretaxDeductions]: any): number {
+  private calculateTaxes([federalTaxes, formValue]: any): number {
     return this.federalTaxCalculatorService.calculate(
-      new FederalTaxForm({
-        filingStatus,
-        incomes,
-        deductions,
-        pretaxDeductions
-      })
-    );
+      FederalTaxForm.from(federalTaxes, formValue));
+  }
+
+  private calculateEffectiveTaxRate([taxesPayable, formValue]: any) {
+    const totalIncome = formValue.incomes
+      .reduce((total: any, income: any) => total + Number(income.annually || 0), 0);
+
+    return totalIncome ? taxesPayable / totalIncome * 100 : 0;
   }
 }
