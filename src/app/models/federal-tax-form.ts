@@ -5,7 +5,8 @@ export class FederalTaxForm {
   incomes: number[] = [];
   numberOfExemptions = 0;
   exemptions: Exemption[] = [];
-  deductions: Deduction[] = [];
+  deductions: number[] = [];
+  pretaxDeductions: number [] = [];
 
   constructor(obj?: any) {
     if (!obj) {
@@ -17,5 +18,6 @@ export class FederalTaxForm {
     this.numberOfExemptions = obj.numberOfExemptions;
     this.exemptions = obj.exemptions;
     this.deductions = obj.deductions;
+    this.pretaxDeductions = obj.pretaxDeductions;
   }
 }

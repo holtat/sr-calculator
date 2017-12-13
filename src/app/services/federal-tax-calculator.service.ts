@@ -14,7 +14,11 @@ export class FederalTaxCalculatorService {
   calculate(form: FederalTaxForm): number {
     const totalIncome = form.incomes.reduce((total, income) => total + Number(income || 0), 0);
 
-    if (totalIncome <= 0) {
+    const taxedIncome = totalIncome
+      - form.deductions.reduce((total, deduction) => total + Number(deduction || 0), 0)
+      - form.pretaxDeductions.reduce((total, pretax) => total + Number(pretax || 0), 0);
+
+    if (taxedIncome <= 0) {
       return 0;
     }
 
@@ -22,12 +26,12 @@ export class FederalTaxCalculatorService {
       .sort(this.orderBracketsAscending);
 
     const indexOfTaxBracket = taxBrackets
-      .findIndex(({ bracket }) => bracket >= totalIncome) - 1;
+      .findIndex(({ bracket }) => bracket >= taxedIncome) - 1;
 
     const filersTaxBracket = taxBrackets[indexOfTaxBracket] || taxBrackets[taxBrackets.length - 1];
 
     return filersTaxBracket.amount
-      + (totalIncome - filersTaxBracket.bracket) * filersTaxBracket.marginalRate * 0.01;
+      + (taxedIncome - filersTaxBracket.bracket) * filersTaxBracket.marginalRate * 0.01;
   }
 
   private orderBracketsAscending(bracketA: any, bracketB: any) {

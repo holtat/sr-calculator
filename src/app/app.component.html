@@ -1,14 +1,6 @@
 <div class="container">
   <h1>Savings Rate Calculator</h1>
   <form [formGroup]="formGroup" novalidate>
-    <div formArrayName="incomes">
-      <div *ngFor="let income of formGroup.controls.incomes.controls; let index = index">
-        <sr-income-input [formControlName]="index"></sr-income-input>
-      </div>
-    </div>
-    <button type="button" class="btn btn-success" (click)="addIncome($event)">
-      +
-    </button>
     <div class="form-group">
       <label for="filingStatus">Filing Status</label>
       <select formControlName="filingStatus" class="form-control" id="filingStatus">
@@ -18,6 +10,37 @@
         <option value="headOfHousehold">Head of Household</option>
       </select>
     </div>
-    Federal Tax: {{taxesPayable$ | async | currency}}
+    <div formArrayName="incomes">
+      <div *ngFor="let income of formGroup.controls.incomes.controls; let index = index">
+        <sr-income-input [formControlName]="index"></sr-income-input>
+      </div>
+    </div>
+    <div class="form-group">
+      <button type="button" class="btn btn-success" (click)="addIncome($event)">
+        + Add Income
+      </button>
+    </div>
+    <div class="form-group custom-controls-stacked">
+      <label class="custom-control custom-radio">
+        <input type="radio" class="custom-control-input" formControlName="deductionType" value="standard">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Standard Deduction</span>
+      </label>
+      <label class="custom-control custom-radio">
+        <input type="radio" class="custom-control-input" formControlName="deductionType" value="itemized">
+        <span class="custom-control-indicator"></span>
+        <span class="custom-control-description">Itemized Deduction</span>
+      </label>
+    </div>
+    <div class="form-group">
+      <label for="401k">401k Contribution</label>
+      <input type="number" class="form-control" id="401k" placeholder="18,000" formControlName="401k">
+    </div>
+    <ng-container *ngIf="isItemizingDeduction$ | async">
+      ITEMIZE
+    </ng-container>
+    <div class="mt-4">
+      Federal Tax: {{taxesPayable$ | async | currency}}
+    </div>
   </form>
 </div>
